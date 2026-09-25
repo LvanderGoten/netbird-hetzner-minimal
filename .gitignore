@@ -1,0 +1,12 @@
+# Never publish credentials or machine-specific material.
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_*
+*setup-key*
+*.log
+known_hosts*
+config.local*
