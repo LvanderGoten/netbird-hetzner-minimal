@@ -12,7 +12,7 @@ NetBird koordiniert die Geräte, verteilt deren öffentliche WireGuard-Schlüsse
 ## Was du brauchst
 
 - Ein eigenes Hetzner-Cloud-Projekt und einen eigenen NetBird-Account.
-- Einen kleinen Ubuntu-VPS. Prüfe Architektur, Standort und den **angezeigten Gesamtpreis** vor dem Bestellen. Eine öffentliche IPv4 kann extra kosten. Ein vorhandenes freies Primary-IP-Objekt kannst du im passenden Standort wiederverwenden.
+- Einen kleinen VPS mit Ubuntu **24.04 LTS**: Diese Version steht in [NetBirds getesteter Linux-Matrix](https://docs.netbird.io/help/support-matrix/netbird-client/linux). Prüfe Architektur, Standort und den **angezeigten Gesamtpreis** vor dem Bestellen. Eine öffentliche IPv4 kann extra kosten. Ein vorhandenes freies Primary-IP-Objekt kannst du im passenden Standort wiederverwenden.
 - Einen SSH-Schlüssel auf deinem Rechner. Optional liegt der private Schlüssel auf einem YubiKey; der **öffentliche** Schlüssel wird bei Hetzner hinterlegt. Der YubiKey ist kein Ersatz für die NetBird-Zugriffsregel.
 - Deine aktuelle öffentliche IPv4 als `/32` für den **vorübergehenden** SSH-Bootstrap. Ermittle sie selbst; übernimm nie die IP eines Tutorials.
 
