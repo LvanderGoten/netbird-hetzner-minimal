@@ -20,15 +20,17 @@ NetBird koordiniert die Geräte, verteilt deren öffentliche WireGuard-Schlüsse
 
 1. Erstelle in Hetzner eine Firewall und weise sie dem neuen VPS **beim Anlegen** zu. Anfangs nur eingehend `TCP 22` von **deiner** öffentlichen `IPv4/32` erlauben. Falls du über IPv6 zugreifst, ergänze nur deine eigene `IPv6/128`. Keine Regel für `0.0.0.0/0` oder `::/0`. Keine weiteren eingehenden Ports.
 2. Wähle Ubuntu, einen passenden Standort und deinen vorhandenen **öffentlichen** SSH-Schlüssel. Backups, zusätzliche Volumes und andere kostenpflichtige Optionen sind für dieses Netzwerkbeispiel nicht erforderlich.
-3. Vergleiche den beim ersten SSH-Login angezeigten Host-Fingerabdruck über einen unabhängigen Weg mit der Hetzner-Konsole. Halte diese Bootstrap-Verbindung offen, bis ein **neuer** privater Login funktioniert.
+3. Vergleiche den beim ersten SSH-Login angezeigten Host-Fingerabdruck über einen unabhängigen Weg mit der Hetzner-Konsole: `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` zeigt dort den ED25519-Fingerabdruck. Halte die Bootstrap-Verbindung offen, bis ein **neuer** privater Login funktioniert.
 
 Hetzner Cloud Firewalls verwerfen neuen eingehenden Verkehr ohne passende Allow-Regel. Ohne ausgehende Regeln bleibt ausgehender Verkehr erlaubt. Eine Hetzner Firewall schützt die **öffentliche** Serververbindung; NetBird regelt den Verkehr **im Overlay**. Beides ist nötig.
 
 ## II · Administrator und SSH absichern
 
-Die folgenden Befehle laufen **auf dem VPS**. Ersetze den öffentlichen Schlüssel durch deinen eigenen, ohne den privaten Schlüssel auf den Server zu kopieren:
+Die folgenden Befehle laufen **auf dem VPS**. Aktualisiere zuerst das Basissystem; ein nötiger Neustart erfolgt erst, wenn du den Zugang erneut prüfen kannst. Ersetze den öffentlichen Schlüssel durch deinen eigenen, ohne den privaten Schlüssel auf den Server zu kopieren:
 
 ```bash
+apt update
+apt full-upgrade -y
 adduser ops
 usermod -aG sudo ops
 install -d -m 700 -o ops -g ops /home/ops/.ssh
