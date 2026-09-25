@@ -51,10 +51,17 @@ Ein YubiKey mit FIDO2-SSH-Schlüssel (`ed25519-sk` oder `ecdsa-sk`) kann die Fre
 
 ## III · NetBird verbinden und eng freigeben
 
-1. Installiere den [offiziellen NetBird-Client](https://docs.netbird.io/get-started/install) auf deinem Rechner und auf dem VPS. Melde beide **im selben privaten Account** an. Für den Server eignet sich ein kurzlebiger, einmaliger Setup Key, der nur der Servergruppe zugewiesen ist. Er gehört nie ins Repo, Video oder Shell-History. Prüfe anschließend `netbird status` auf **beiden** Geräten.
-2. Lege die Gruppen `video-admin` (**nur dein Rechner**) und `video-vps` (**nur dieser Server**) an. Prüfe alle weiteren Gruppenmitgliedschaften und vorhandenen Policies. Ein breites „All to All“ würde die enge Regel unterlaufen.
+1. Installiere den [offiziellen NetBird-Client](https://docs.netbird.io/get-started/install) auf deinem Rechner und auf dem VPS. Melde beide **im selben privaten Account** an. Für den Headless-Server verwende einen **kurzlebigen Setup Key mit nur einer Nutzung**. Falls die Erstellungsmaske eine Gruppenzuordnung bietet, wähle ausschließlich `video-vps`. Der Key gehört nie ins Repo, Video oder Shell-History; übergib ihn dem Client verdeckt und lösche eine Zwischenablage-Kopie danach. Prüfe anschließend `netbird status` auf **beiden** Geräten.
+2. Lege die Gruppen `video-admin` (**nur dein Rechner**) und `video-vps` (**nur dieser Server**) an. Wenn der Setup Key keine Gruppe zuweisen konnte, ordne den verbundenen Server **vor dem Aktivieren einer Policy** manuell `video-vps` zu. Prüfe alle weiteren Gruppenmitgliedschaften und vorhandenen Policies. Ein breites „All to All“ würde die enge Regel unterlaufen.
 3. Lege **eine gerichtete** Allow-Policy an: Quelle `video-admin`, Ziel `video-vps`, Protokoll `TCP`, Port `22`. Nutze für dieses Beispiel **OpenSSH**; NetBirds optionaler eigener SSH-Server bleibt deaktiviert.
 4. Lies die echte NetBird-IP und den Peer-DNS-Namen des VPS im Dashboard ab. Teste vom Admin-Rechner einen **neuen** SSH-Login über diesen Namen oder die Overlay-IP. Prüfe `hostname`, `whoami` und `sudo -v` (mit deinem `ops`-Passwort). DNS-Auflösung allein beweist noch keinen erlaubten Netzwerkzugriff.
+
+**Wenn beide Peers „Connected“ zeigen, TCP 22 aber in einen Timeout läuft:** Prüfe auch eine weitere VPN- oder Host-Firewall auf dem Admin-Rechner. Bei der Aufnahme blockierte die lokale NordVPN-Firewall den Verkehr zum NetBird-Interface, obwohl NetBird seine SSH-Policy bereits auf dem Server installiert hatte. Eine Ausnahme für **genau die NetBird-IP des VPS als `/32`** stellte den privaten TCP-Weg her. NordVPNs Allowlist nimmt passenden Verkehr aus **NordVPNs** Tunnel und Firewall aus; NetBirds eigener WireGuard-Tunnel verschlüsselt ihn weiterhin. Die Ausnahme gilt laut [NordVPN-Dokumentation](https://support.nordvpn.com/hc/en-us/articles/19618692366865-What-is-Split-Tunneling-and-how-to-use-it-with-NordVPN) für ein- und ausgehenden Verkehr zu dieser Adresse. Verwende deshalb keine pauschale Freigabe des ganzen NetBird-Netzes und prüfe die Auswirkung auf deinem eigenen Rechner.
+
+```bash
+# Nur wenn NordVPN auf deinem Admin-Rechner den NetBird-Peer blockiert:
+nordvpn allowlist add subnet DEINE_NETBIRD_VPS_IP/32
+```
 
 ## IV · Öffentlichen SSH-Zugang schließen
 
@@ -85,6 +92,7 @@ Hostinger bietet ebenfalls VPS und Firewallfunktionen. Seine Angebots- und Verl�
 Diese Links dokumentieren das Verhalten; Versionsstände und Preise können sich ändern:
 
 - [NetBird: Funktionsweise](https://docs.netbird.io/about-netbird/how-netbird-works), [Zugriffsregeln](https://docs.netbird.io/manage/access-control/manage-network-access), [Client installieren](https://docs.netbird.io/get-started/install)
+- [NetBird: Konflikte mit Host-Firewalls](https://docs.netbird.io/about-netbird/ports-and-firewalls), [NordVPN: Linux-Allowlist](https://support.nordvpn.com/hc/en-us/articles/19618692366865-What-is-Split-Tunneling-and-how-to-use-it-with-NordVPN)
 - [Hetzner: Cloud Firewall](https://docs.hetzner.com/cloud/firewalls/faq/), [Preisanpassung Juni 2026](https://docs.hetzner.com/de/general/infrastructure-and-availability/price-adjustment/)
 - [Hostinger: deutsche VPS-Angebote und Verlängerungspreise](https://www.hostinger.com/de/vps)
 - [WireGuard: Protokoll und Design](https://www.wireguard.com/)
